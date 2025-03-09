@@ -1,0 +1,198 @@
+/* === Основні стилі === */
+:root {
+    --font-main: 'Arial', sans-serif;
+    --font-heading: 'Montserrat', sans-serif;
+}
+
+body {
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+/* Контейнер для всього контенту */
+.page {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* === Лого === */
+#logo-container {
+    width: 550px;
+    height: 550px;
+    position: relative;
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* === Часова шкала (Досвід) === */
+/* Контейнер для всієї шкали */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    max-width: 800px;
+    margin: 50px auto;
+}
+
+/* Вертикальна лінія */
+.timeline::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: #333;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Контейнер для кожного блоку досвіду */
+.timeline-item {
+    width: 45%;
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Розміщення блоків чергуючись ліворуч та праворуч */
+.timeline-item:nth-child(odd) {
+    text-align: right;
+    align-self: flex-start;
+}
+
+.timeline-item:nth-child(even) {
+    text-align: left;
+    align-self: flex-end;
+}
+
+/* Для мобільних пристроїв: блоки розташовуються один під одним */
+@media (max-width: 768px) {
+    .timeline-item {
+        width: 90%;
+        text-align: left;
+        align-self: center;
+    }
+
+    .timeline::before {
+        left: 10px;
+    }
+}
+
+/* === Секція навичок === */
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 0;
+}
+
+.skill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+}
+
+.skill img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* === Адаптивність для мобільних === */
+@media (max-width: 1024px) {
+    #home {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    #logo-container {
+        width: 100%;
+        height: auto;
+    }
+
+    .timeline::before {
+        left: 10px;
+    }
+
+    .timeline-item {
+        text-align: left;
+        padding-left: 30px;
+    }
+
+    .skills {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .timeline::before {
+        left: 5px;
+    }
+
+    .timeline-item {
+        padding-left: 20px;
+    }
+}
+
+/* Additional styles for the home section */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo {
+    margin-right: 50px;
+}
+
+.info {
+    margin-left: 50px;
+}
+
+section {
+    margin: 20px 0;
+}
+
+.timeline {
+    margin-top: 20px;
+}
+
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.skill {
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+#logo-canvas {
+    width: 550px;
+    height: 550px;
+}

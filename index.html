@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портфоліо</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #98FB98, #022a572a);
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .nav-box {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #98FB98;
+            padding: 15px;
+        }
+        .nav-box a {
+            text-decoration: none;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .logo {
+            position: absolute;
+            left: 250px;
+            top: 50px;
+            z-index: 10;
+            transform-origin: top left;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-box">
+        <a href="#home">Головна</a>
+        <a href="#experience">Досвід</a>
+        <a href="#skills">Навички</a>
+        <a href="#contact">Контакти</a>
+    </nav>
+
+    <section id="home">
+        <div class="container">
+            <div class="logo" id="logo">
+                <div id="logo-canvas"></div>
+            </div>
+            <div class="info" style="margin-left: 200px; text-align: center;">
+                <img src="photo.jpg" alt="Фото" width="300">
+                <h1>Ім'я Прізвище</h1>
+                <p>Email: ruppelt@ukr.net</p>
+                <p>Спеціалізація: 2D-художник, моушн-дизайнер</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" style="text-align: center;">
+        <h2>Галерея UrbanPlanet</h2>
+        <div class="slider-container">
+            <div class="slider" id="urban-slider"></div>
+        </div>
+
+        <h2>Галерея Freelance</h2>
+        <div class="slider-container">
+            <div class="slider" id="freelance-slider"></div>
+        </div>
+    </section>
+
+    <section id="skills" style="text-align: center;">
+        <h2>Навички</h2>
+        <div class="skills-container" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div class="skill"><img src="PS.png" width="50"> Photoshop ⭐⭐⭐⭐⭐</div>
+            <div class="skill"><img src="I.png" width="50"> Illustrator ⭐⭐⭐⭐☆</div>
+            <div class="skill"><img src="AE.png" width="50"> After Effects ⭐⭐⭐☆☆</div>
+            <div class="skill"><img src="A.png" width="50"> Ableton ⭐⭐⭐☆☆</div>
+            <div class="skill"><img src="AC.png" width="50"> Archicad ⭐⭐⭐⭐⭐</div>
+            <div class="skill"><img src="SU.png" width="50"> Sketchup ⭐⭐⭐⭐⭐</div>
+        </div>
+    </section>
+
+    <section id="contact" style="text-align: center;">
+        <h2>Контакти</h2>
+        <ul>
+            <li><a href="https://www.behance.net/Brat">Behance</a></li>
+            <li><a href="https://www.etsy.com/shop/RuppeltUA">Etsy</a></li>
+        </ul>
+    </section>
+
+    <script src="logo.js"></script>
+    <script>
+        function createSlider(id, folderPath, images) {
+            const slider = document.getElementById(id);
+            const slidesContainer = document.createElement('div');
+            slidesContainer.classList.add('slides');
+            slider.appendChild(slidesContainer);
+
+            images.forEach(image => {
+                const slide = document.createElement('div');
+                slide.classList.add('slide');
+                slide.innerHTML = `<img src="${folderPath + image}" alt="Slide Image" class="slide-img">`;
+                slidesContainer.appendChild(slide);
+            });
+
+            slidesContainer.innerHTML += slidesContainer.innerHTML;
+
+            let scrollAmount = 0;
+            function moveSlides() {
+                scrollAmount += 1;
+                slidesContainer.style.transform = `translateX(-${scrollAmount}px)`;
+                if (scrollAmount >= slidesContainer.scrollWidth / 2) {
+                    scrollAmount = 0;
+                    slidesContainer.style.transition = 'none';
+                    slidesContainer.style.transform = `translateX(0)`;
+                } else {
+                    slidesContainer.style.transition = 'transform 0.05s linear';
+                }
+            }
+            setInterval(moveSlides, 30);
+        }
+
+        createSlider('urban-slider', 'assets/UrbanPlanet/', ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg']);
+        createSlider('freelance-slider', 'assets/Freelance/', ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg']);
+
+        // Make the logo draggable
+        const logo = document.getElementById('logo');
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+
+        logo.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialX = logo.offsetLeft;
+            initialY = logo.offsetTop;
+            logo.style.transition = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                logo.style.left = `${initialX + dx}px`;
+                logo.style.top = `${initialY + dy}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            logo.style.transition = '';
+        });
+
+        // Make the logo resizable
+        logo.style.resize = 'both';
+        logo.style.overflow = 'auto';
+    </script>
+
+    <style>
+        .slider-container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+        .slider {
+            display: flex;
+            white-space: nowrap;
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.05s linear;
+        }
+        .slide {
+            flex: 0 0 auto;
+            width: 300px;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+        .slide-img {
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
+        }
+    </style>
+</body>
+</html>
