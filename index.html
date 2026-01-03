@@ -10,6 +10,7 @@
             background: linear-gradient(to bottom, #98FB98, #022a572a);
             margin: 0;
             font-family: Arial, sans-serif;
+            cursor: url('brush.png') 16 16, auto;
         }
         .nav-box {
             display: flex;
@@ -26,19 +27,89 @@
         }
         .logo {
             position: absolute;
-            left: 250px;
-            top: 50px;
+            left: 18%; /* slightly left of center */
+            top: 48px;
             z-index: 10;
             transform-origin: top left;
-            cursor: move;
+            pointer-events: none; /* ignore clicks so logo won't react */
         }
     </style>
+    <script>
+        // Image follow-cursor behaviour: attempts to load photo.png, falls back to photo.jpg
+        document.addEventListener('DOMContentLoaded', function(){
+            const img = document.getElementById('hero-photo');
+            if(!img) return;
+            const fallback = 'photo.jpg';
+            const trySrc = 'photo.png';
+            // try PNG first
+            img.src = trySrc;
+            img.addEventListener('error', function handler(){
+                img.removeEventListener('error', handler);
+                img.src = fallback;
+            });
+
+            img.style.position = 'relative';
+            img.style.transition = 'transform 0.18s cubic-bezier(.2,.8,.2,1)';
+
+            let rect = null;
+            function updateRect(){ rect = img.getBoundingClientRect(); }
+            updateRect();
+            window.addEventListener('resize', updateRect);
+
+            document.addEventListener('mousemove', (e) => {
+                if(!rect) updateRect();
+                const cx = rect.left + rect.width/2;
+                const cy = rect.top + rect.height/2;
+                const dx = e.clientX - cx;
+                const dy = e.clientY - cy;
+                const max = 20; // maximum pixel offset
+                const strength = 0.09; // how much it moves toward cursor
+                const tx = Math.max(-max, Math.min(max, dx * strength));
+                const ty = Math.max(-max, Math.min(max, dy * strength));
+                img.style.transform = `translate(${tx}px, ${ty}px)`;
+            });
+
+            document.addEventListener('mouseleave', () => { img.style.transform = 'translate(0,0)'; });
+        });
+    </script>
+    <script>
+        // Fake brush cursor fallback: show an image that follows the mouse if brush.png loads
+        (function(){
+            const imgTest = new Image();
+            imgTest.src = 'brush.png';
+            imgTest.onload = () => {
+                const fake = document.createElement('img');
+                fake.id = 'fake-cursor';
+                fake.src = imgTest.src;
+                fake.style.position = 'fixed';
+                fake.style.width = '32px';
+                fake.style.height = '32px';
+                fake.style.pointerEvents = 'none';
+                fake.style.zIndex = '9999';
+                fake.style.transform = 'translate(-16px, -16px)';
+                fake.style.display = 'none';
+                document.body.appendChild(fake);
+
+                document.addEventListener('mousemove', (e) => {
+                    fake.style.left = e.clientX + 'px';
+                    fake.style.top = e.clientY + 'px';
+                    if (fake.style.display === 'none') fake.style.display = 'block';
+                });
+                document.addEventListener('mouseleave', () => { fake.style.display = 'none'; });
+                // hide native cursor over page so fake cursor is visible
+                document.body.style.cursor = 'none';
+            };
+            imgTest.onerror = () => {
+                // failed to load brush.png — keep native cursor
+            };
+        })();
+    </script>
 </head>
 <body>
+    <canvas id="shader-bg"></canvas>
     <nav class="nav-box">
         <a href="#home">Головна</a>
         <a href="#experience">Досвід</a>
-        <a href="#skills">Навички</a>
         <a href="#contact">Контакти</a>
     </nav>
 
@@ -48,40 +119,27 @@
                 <div id="logo-canvas"></div>
             </div>
             <div class="info" style="margin-left: 200px; text-align: center;">
-                <img src="photo.jpg" alt="Фото" width="300">
+                <img id="hero-photo" src="photo.png" alt="Фото" width="300">
                 <h1>Руппельт Віталій</h1>
                 <p>Email: ruppelt@ukr.net</p>
-                <p>Спеціалізація: 2D-художник, моушн-дизайнер</p>
             </div>
         </div>
     </section>
 
     <section id="experience" style="text-align: center;">
-        <h2>Галерея UrbanPlanet</h2>
+        <h2>UrbanPlanet</h2>
         <div class="slider-container">
             <div class="slider" id="urban-slider"></div>
         </div>
 
-        <h2>Галерея Freelance</h2>
+        <h2>стіни</h2>
         <div class="slider-container">
             <div class="slider" id="freelance-slider"></div>
         </div>
     </section>
 
-    <section id="skills" style="text-align: center;">
-        <h2>Навички</h2>
-        <div class="skills-container" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-            <div class="skill"><img src="PS.png" width="50"> Photoshop ⭐⭐⭐⭐⭐</div>
-            <div class="skill"><img src="I.png" width="50"> Illustrator ⭐⭐⭐⭐☆</div>
-            <div class="skill"><img src="AE.png" width="50"> After Effects ⭐⭐⭐☆☆</div>
-            <div class="skill"><img src="A.png" width="50"> Ableton ⭐⭐⭐☆☆</div>
-            <div class="skill"><img src="AC.png" width="50"> Archicad ⭐⭐⭐⭐⭐</div>
-            <div class="skill"><img src="SU.png" width="50"> Sketchup ⭐⭐⭐⭐⭐</div>
-        </div>
-    </section>
-
     <section id="contact" style="text-align: center;">
-        <h2>Контакти</h2>
+        <h2>посилання</h2>
         <ul>
             <li><a href="https://www.behance.net/Brat">Behance</a></li>
             <li><a href="https://www.etsy.com/shop/RuppeltUA">Etsy</a></li>
@@ -157,6 +215,17 @@
     </script>
 
     <style>
+        /* Fullscreen shader background */
+        #shader-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* keep canvas visually behind content */
+            pointer-events: none; /* let clicks pass through to page */
+            display: block;
+        }
+
         .slider-container {
             width: 80%;
             margin: auto;
@@ -184,5 +253,10 @@
             object-fit: cover;
         }
     </style>
+
+    <section style="text-align: center; padding: 60px 20px;">
+        <img src="rr.gif" alt="Animation" style="max-width: 400px; height: auto;">
+    </section>
+
 </body>
 </html>
